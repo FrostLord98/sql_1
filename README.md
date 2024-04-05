@@ -117,3 +117,104 @@ select * from contact_request;
 update contact_request set id_country =2,  physical_address = 'fooland' 
 where name = 'fooziman';
 select * from contact_request;
+
+![WhatsApp Image 2024-04-05 at 1 48 29 PM](https://github.com/FrostLord98/sql_1/assets/110127391/b4788ed6-3d0d-4a75-b2d6-9d55677fa1c1)
+
+
+create table countries(
+  id_country serial primary key not null,
+  name varchar(50) not null
+);
+
+create table roles (
+  id_role serial primary key not null,
+  name varchar(50) not null
+);
+
+create table taxes(
+  id_tax serial primary key not null,
+  percentage varchar(5)
+);
+
+create table offers (
+  id_offer serial primary key not null,
+  status varchar(20) not null
+);
+
+create table discounts (
+  id_discount serial primary key not null,
+  status varchar(20) not null,
+  percentage varchar(5)
+);
+
+create table payments (
+  id_payment serial primary key not null,
+  _type varchar(20) not null
+);
+
+create table customers(
+  id_customer serial primary key not null,
+  id_country integer not null,
+  id_role integer not null,
+  email varchar(50) not null,
+  name varchar(50) not null,
+  age integer not null,
+  password varchar(50) not null,
+  physical_addresss text not null,
+  foreign key (id_country) references countries (id_country),
+  foreign key (id_role) references roles (id_role)
+);
+
+create table invoice_status (
+  id_invoice_status serial primary key not null,
+  status varchar(20) not null
+);
+
+create table products (
+  id_product serial primary key not null,
+  id_discount integer not null,
+  id_offer integer not null,
+  id_tax integer not null,
+  name text not null,
+  details text,
+  minimum_stock integer not null,
+  maximum_stock integer not null,
+  current_stock integer not null,
+  price integer not null,
+  price_with_tax integer,
+  foreign key (id_discount) references discounts (id_discount),
+  foreign key (id_offer) references offers (id_offer),
+  foreign key (id_tax) references taxes (id_tax)
+);
+
+create table products_customers(
+  id_product integer not null,
+  id_customer integer not null,
+  foreign key (id_customer) references customers (id_customer),
+  foreign key (id_product) references products (id_product),
+  PRIMARY KEY (id_customer, id_product)
+);
+
+create table invoices(
+  id_invoice serial primary key not null,
+  id_customer integer not null,
+  id_payment integer not null,
+  id_invoice_status integer not null,
+  _date date not null,
+  total_to_pay integer not null,
+  foreign key (id_customer) references customers (id_customer),
+  foreign key (id_payment) references payments (id_payment),
+  foreign key (id_invoice_status) references invoice_status (id_invoice_status)
+);
+
+create table orders (
+  id_order serial primary key not null,
+  id_invoice integer not null,
+  id_product integer not null,
+  detail text not null,
+  amount integer not null,
+  price integer not null,
+  foreign key (id_invoice) references invoices (id_invoice),
+  foreign key (id_product) references products (id_product)
+);
+
